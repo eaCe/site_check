@@ -27,7 +27,7 @@ window.scan = () => {
 
             this.error = '';
             this.loading = true;
-            window.api.invoke('scanSite', this.requestUrl.origin)
+            window.api.invoke('scanSite', this.requestUrl.href)
                 .then(res => {
                     this.reset();
                     this.urls = res.urls;
