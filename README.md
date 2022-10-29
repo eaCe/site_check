@@ -1,5 +1,5 @@
 ```javascript
-// install dependencise
+// install dependencies
 yarn / npm install
 
 // build assets
