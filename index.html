@@ -9,8 +9,8 @@
 <body class="transition-opacity bg-slate-100">
 <div class="container mx-auto" x-data="scan()">
     <form class="pt-6 mb-8" @submit.prevent="scanSite()">
-        <label for="url" class="text-lg text-slate-700 font-bold block mb-2">Website scannen</label>
-        <div class="mt-1 flex rounded-md shadow-sm text-slate-700">
+        <label for="url" class="text-lg text-slate-700 font-bold block mb-2">URL scannen</label>
+        <div class="mt-1 flex rounded-md shadow-sm text-slate-700 relative z-20">
             <div class="relative flex flex-grow items-stretch focus-within:z-10">
                 <div class="pointer-events-none absolute text-slate-600 inset-y-0 left-0 flex items-center pl-3">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -37,6 +37,15 @@
                 </svg>
                 <span>Scannen</span>
             </button>
+        </div>
+
+        <div :class="error !== '' ? 'translate-y-0 opacity-1' : '-translate-y-full opacity-0' " class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold flex bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1.5 mt-0.5" viewBox="0 0 16 16">
+                <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
+                <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+            </svg>
+            <span x-text="error"></span>
+            <span>Ungültige URL</span>
         </div>
     </form>
 

@@ -6,6 +6,7 @@ window.scan = () => {
     return {
         loading: false,
         requestUrl: '',
+        error: '',
         type: '',
         types: [],
         urls: [],
@@ -16,8 +17,16 @@ window.scan = () => {
                 return false;
             }
 
+            try {
+                this.requestUrl = new URL(this.$refs.url.value);
+            } catch (error) {
+                this.requestUrl = '';
+                this.error = 'Ungültige URL';
+                return false;
+            }
+
+            this.error = '';
             this.loading = true;
-            this.requestUrl = new URL(this.$refs.url.value);
             window.api.invoke('scanSite', this.requestUrl.origin)
                 .then(res => {
                     this.reset();
