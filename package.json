@@ -1,7 +1,8 @@
 {
   "name": "site-check",
   "version": "0.0.1",
-  "description": "",
+  "description": "Check a site...",
+  "author": "eaCe",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
