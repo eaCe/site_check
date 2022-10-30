@@ -150,7 +150,8 @@
             <div class="space-y-2 w-full">
 
             <template x-for="cookie in cookies">
-                <div class="w-full rounded-md shadow-sm text-slate-700 bg-white p-2">
+                <div class="w-full rounded-md shadow-sm text-slate-700 p-2"
+                     :class="cookie.critical ? 'bg-orange-300 bg-opacity-30' : 'bg-white'">
                     <div><strong>Domain:</strong> <span  x-text="cookie.domain"></span></div>
                     <div><strong>Name:</strong> <span  x-text="cookie.name"></span></div>
                     <div><strong>Value:</strong> <span  x-text="cookie.value"></span></div>

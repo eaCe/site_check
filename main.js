@@ -120,7 +120,22 @@ ipcMain.handle('scanSite', async (event, url) => {
     const rawCookies = await page.context().cookies();
 
     if (rawCookies.length) {
+        const criticalCookies = [
+            // youtube
+            'GPS',
+            'YSC',
+            'VISITOR_INFO1_LIVE',
+            // google analytics
+            '_ga',
+            '_gat',
+            '_gid',
+            '_gtag',
+        ];
+
         cookies = rawCookies;
+        cookies.forEach(cookie => {
+            cookie['critical'] = criticalCookies.some(criticalCookie => cookie.name.includes(criticalCookie));
+        });
     }
 
     /**
