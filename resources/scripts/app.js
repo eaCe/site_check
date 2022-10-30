@@ -5,6 +5,7 @@ window.Alpine = Alpine
 window.scan = () => {
     return {
         loading: false,
+        showExternal: false,
         requestUrl: '',
         error: '',
         type: '',

@@ -11,7 +11,7 @@
     <form class="pt-6 mb-8" @submit.prevent="scanSite()">
         <label for="url" class="text-lg text-slate-700 font-bold block mb-2">URL scannen</label>
         <div class="mt-1 flex rounded-md shadow-sm text-slate-700 relative z-20">
-            <div class="relative flex flex-grow items-stretch focus-within:z-10">
+            <div class="relative flex flex-grow items-stretch">
                 <div class="pointer-events-none absolute text-slate-600 inset-y-0 left-0 flex items-center pl-3">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
@@ -23,11 +23,11 @@
                        name="url"
                        id="url"
                        :disabled="loading"
-                       class="block w-full rounded-none rounded-l-md border-slate-300 pl-10 focus:border-slate-500 focus:ring-slate-500 sm:text-sm" placeholder="http://www.example.com">
+                       class="block w-full rounded-none rounded-l-md border-slate-300 pl-10" placeholder="http://www.example.com">
             </div>
             <button type="submit"
                     :disabled="loading"
-                    class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500">
+                    class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
                 <svg x-show="loading" class="animate-spin ml-2 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -53,12 +53,26 @@
             <template x-if="types.length">
                 <div class="flex w-full justify-between">
                     <p class="text-lg text-slate-700 font-bold block mb-2 w-full">Request URLs</p>
-                    <div class="w-auto">
+                    <div class="w-auto flex items-center">
+                        <div class="relative flex items-start">
+                            <div class="flex pt-0.5 mr-1 items-center">
+                                <input id="critical"
+                                       name="critical"
+                                       type="checkbox"
+                                       x-model="showExternal"
+                                       class="h-5 w-5 rounded border-slate-400 text-slate-500 accent-slate-500">
+                            </div>
+                            <div class="mr-4">
+                                <label for="critical"
+                                       class="font-medium text-slate-700 whitespace-nowrap select-none">Nur externe anzeigen</label>
+                            </div>
+                        </div>
+
                         <label for="filter" class="block text-sm font-medium text-slate-700">
                             <select id="filter"
                                     name="filter"
                                     x-model="type"
-                                    class="mt-1 w-52 block w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base uppercase focus:border-slate-500 focus:outline-none focus:ring-slate-500 sm:text-sm">
+                                    class="mt-1 w-52 block w-full rounded-md border-slate-300 py-2 pl-3 pr-10 text-base uppercase">
                                 <option selected value="">Alle</option>
                                 <template x-for="type of types">
                                     <option :value="type" x-text="type"></option>
@@ -70,10 +84,10 @@
             </template>
 
             <div class="space-y-2 w-full">
-
                 <template x-for="url in filteredUrls()">
                     <div class="w-full rounded-md shadow-sm text-slate-700 bg-white p-2 break-words"
-                         :class="url.same_host ? 'bg-green-200 bg-opacity-30' : 'bg-red-300 bg-opacity-30'">
+                         :class="url.same_host ? 'bg-green-200 bg-opacity-30' : 'bg-red-300 bg-opacity-30'"
+                         x-show="!showExternal || showExternal && !url.same_host">
                         <div class="flex flex-row items-start">
                             <div class="w-auto pr-1.5 pt-0.5" :class="url.same_host ? 'text-green-700' : ''">
                                 <template x-if="url.type === 'font'">
