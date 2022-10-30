@@ -28,7 +28,7 @@
             <button type="submit"
                     :disabled="loading"
                     class="relative -ml-px inline-flex items-center space-x-2 rounded-r-md border border-slate-300 bg-slate-500 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-100 hover:text-slate-700 transition-colors">
-                <svg x-show="loading" class="animate-spin ml-2 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg x-show="loading" x-cloak class="animate-spin ml-2 h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -39,7 +39,7 @@
             </button>
         </div>
 
-        <div :class="error !== '' ? 'translate-y-0 opacity-1' : '-translate-y-full opacity-0' " class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold flex bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
+        <div :class="error !== '' ? 'translate-y-0 opacity-1' : '-translate-y-full opacity-0'" x-cloak class="transition-all relative z-10 text-red-500 -mt-1 pl-0.5 text-sm font-bold flex bg-red-500 bg-opacity-10 items-center justify-center pt-2.5 pb-2 rounded-b-lg">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1.5 mt-0.5" viewBox="0 0 16 16">
                 <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.146.146 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.163.163 0 0 1-.054.06.116.116 0 0 1-.066.017H1.146a.115.115 0 0 1-.066-.017.163.163 0 0 1-.054-.06.176.176 0 0 1 .002-.183L7.884 2.073a.147.147 0 0 1 .054-.057zm1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566z"/>
                 <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
@@ -89,7 +89,7 @@
                          :class="url.same_host ? 'bg-green-200 bg-opacity-30' : 'bg-red-300 bg-opacity-30'"
                          x-show="!showExternal || showExternal && !url.same_host">
                         <div class="flex flex-row items-start">
-                            <div class="w-auto pr-1.5 pt-0.5" :class="url.same_host ? 'text-green-700' : ''">
+                            <div class="w-auto pr-1.5 pt-0.5" :class="url.same_host ? 'text-green-700' : 'text-red-700'">
                                 <template x-if="url.type === 'font'">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16">
                                         <path d="M10.943 6H5.057L5 8h.5c.18-1.096.356-1.192 1.694-1.235l.293-.01v5.09c0 .47-.1.582-.898.655v.5H9.41v-.5c-.803-.073-.903-.184-.903-.654V6.755l.298.01c1.338.043 1.514.14 1.694 1.235h.5l-.057-2z"/>
