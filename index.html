@@ -85,7 +85,7 @@
 
             <div class="space-y-2 w-full">
                 <template x-for="url in filteredUrls()">
-                    <div class="w-full rounded-md shadow-sm text-slate-700 bg-white p-2 break-words"
+                    <div class="w-full rounded-md shadow-sm text-slate-700 bg-white p-2 break-all"
                          :class="url.same_host ? 'bg-green-200 bg-opacity-30' : 'bg-red-300 bg-opacity-30'"
                          x-show="!showExternal || showExternal && !url.same_host">
                         <div class="flex flex-row items-start">
