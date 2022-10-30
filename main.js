@@ -100,20 +100,6 @@ ipcMain.handle('scanSite', async (event, url) => {
         });
     });
 
-    /**
-     * sort by type
-     */
-    urls.sort((a, b) => {
-        const typeA = a.type.toUpperCase();
-        const typeB = b.type.toUpperCase();
-        return (typeA > typeB) ? -1 : (typeA < typeB) ? 1 : 0;
-    });
-
-    /**
-     * sort by host
-     */
-    urls.sort((a, b) => Number(b.same_host) - Number(a.same_host));
-
     // await page.on('response', response => {
     // const url = new URL(response.url());
     // const host = url.host.replace('www.', '');
@@ -154,6 +140,20 @@ ipcMain.handle('scanSite', async (event, url) => {
     }
 
     await browser.close();
+
+    /**
+     * sort by type
+     */
+    urls.sort((a, b) => {
+        const typeA = a.type.toUpperCase();
+        const typeB = b.type.toUpperCase();
+        return (typeA > typeB) ? -1 : (typeA < typeB) ? 1 : 0;
+    });
+
+    /**
+     * sort by host
+     */
+    urls.sort((a, b) => Number(b.same_host) - Number(a.same_host));
 
     return {'urls': urls, 'cookies': cookies, 'localStorage': localStorage, 'types': availableTypes};
 });
