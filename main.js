@@ -51,6 +51,7 @@ function getType(request) {
         return resourceType;
     } else if (url.includes('fonts.googleapis.com') ||
         url.includes('fonts.gstatic.com') ||
+        url.includes('myfonts.net') ||
         url.includes('use.typekit.net')) {
         if (availableTypes.indexOf('font') === -1) {
             availableTypes.push('font');
