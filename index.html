@@ -175,11 +175,20 @@
             <div class="space-y-2 w-full">
 
             <template x-for="cookie in cookies">
-                <div class="w-full rounded-md shadow-sm text-slate-700 p-2"
+                <div class="w-full rounded-md shadow-sm text-slate-700 flex flex-wrap p-2"
                      :class="cookie.critical ? 'bg-orange-300 bg-opacity-30' : 'bg-white'">
-                    <div><strong>Domain:</strong> <span  x-text="cookie.domain"></span></div>
-                    <div><strong>Name:</strong> <span  x-text="cookie.name"></span></div>
-                    <div><strong>Value:</strong> <span  x-text="cookie.value"></span></div>
+                    <div class="w-full md:w-6/12">
+                        <div><strong>Domain:</strong> <span  x-text="cookie.domain"></span></div>
+                    </div>
+                    <div class="w-full md:w-6/12">
+                        <div><strong>Ablaufdatum:</strong> <span  x-text="cookie.expires"></span></div>
+                    </div>
+                    <div class="w-full md:w-6/12">
+                        <div><strong>Name:</strong> <span  x-text="cookie.name"></span></div>
+                    </div>
+                    <div class="w-full md:w-6/12">
+                        <div><strong>Value:</strong> <span  x-text="cookie.value"></span></div>
+                    </div>
                 </div>
             </template>
             </div>

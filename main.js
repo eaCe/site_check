@@ -145,6 +145,12 @@ ipcMain.handle('scanSite', async (event, url) => {
         cookies = rawCookies;
         cookies.forEach(cookie => {
             cookie['critical'] = criticalCookies.some(criticalCookie => cookie.name.includes(criticalCookie));
+
+            if (cookie.expires > 0) {
+                cookie['expires'] = new Date(cookie.expires * 1000).toLocaleDateString('de-DE');
+            } else {
+                cookie['expires'] = '∞';
+            }
         });
     }
 
