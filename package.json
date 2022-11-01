@@ -10,7 +10,15 @@
     "build": "mix",
     "build:production": "mix --production",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
+  },
+  "build": {
+    "appId": "site.check",
+    "mac": {
+      "category": "utilities"
+    }
   },
   "repository": "https://github.com/eaCe/site_check",
   "devDependencies": {
@@ -25,6 +33,7 @@
     "browser-sync": "^2.27.10",
     "browser-sync-webpack-plugin": "^2.3.0",
     "electron": "^20.2.0",
+    "electron-builder": "^23.6.0",
     "eslint": "^8.24.0",
     "eslint-plugin-import": "^2.26.0",
     "laravel-mix": "^6.0.49",
