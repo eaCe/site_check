@@ -1,6 +1,5 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
-require('electron-reload')(__dirname);
 const {chromium} = require('playwright');
 
 function createWindow() {

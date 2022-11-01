@@ -6,7 +6,7 @@ mix.js('./resources/scripts/app.js', 'js')
         [
             require("tailwindcss"),
         ])
-    .setPublicPath('app');
+    .setPublicPath('./');
 
 mix.copyWatched('resources/templates/**', 'app/templates');
 

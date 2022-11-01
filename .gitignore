@@ -1,5 +1,6 @@
 node_modules
-out/
-/.idea/
-/yarn-error.log
-/app/
+/mix-manifest.json
+/styles
+/js
+/out
+/dist
