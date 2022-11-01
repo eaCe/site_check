@@ -14,7 +14,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "build": {
-    "appId": "your.id",
+    "appId": "de.electron.site-check",
     "mac": {
       "category": "your.app.category.type"
     },
@@ -22,7 +22,8 @@
       "target": "portable"
     },
     "portable": {
-      "useZip": true
+      "useZip": true,
+      "splashImage": "splash.bmp"
     }
   },
   "repository": "https://github.com/electron/electron-quick-start",
