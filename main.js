@@ -86,6 +86,8 @@ ipcMain.handle('scanSite', async (event, url) => {
     let urls = [];
     let cookies = [];
     let localStorage = [];
+    let ssl = false;
+    let sslExpiration = '';
 
     /**
      * get urls
@@ -112,7 +114,14 @@ ipcMain.handle('scanSite', async (event, url) => {
     // });
     // });
 
-    await page.goto(url, {waitUntil: 'load'});
+    const pageResponse = await page.goto(url, {waitUntil: 'load'});
+    const securityDetails = await pageResponse.securityDetails();
+
+    if (securityDetails.hasOwnProperty('validTo')) {
+        const expirationDate = securityDetails.validTo * 1000;
+        ssl = true;
+        sslExpiration = new Date(expirationDate).toLocaleDateString('de-DE');
+    }
 
     /**
      * get cookies
@@ -171,5 +180,12 @@ ipcMain.handle('scanSite', async (event, url) => {
      */
     urls.sort((a, b) => Number(b.same_host) - Number(a.same_host));
 
-    return {'urls': urls, 'cookies': cookies, 'localStorage': localStorage, 'types': availableTypes};
+    return {
+        'urls': urls,
+        'cookies': cookies,
+        'localStorage': localStorage,
+        'types': availableTypes,
+        'ssl': ssl,
+        'sslExpiration': sslExpiration,
+    };
 });

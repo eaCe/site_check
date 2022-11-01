@@ -13,6 +13,8 @@ window.scan = () => {
         urls: [],
         cookies: [],
         localStorage: [],
+        ssl: false,
+        sslExpiration: '',
         scanSite() {
             if (this.loading) {
                 return false;
@@ -35,6 +37,8 @@ window.scan = () => {
                     this.cookies = res.cookies;
                     this.types = res.types;
                     this.localStorage = res.localStorage;
+                    this.ssl = res.ssl;
+                    this.sslExpiration = res.sslExpiration;
                 })
                 .catch(err => {
                     console.error(err);
