@@ -14,5 +14,5 @@ npm run build:production
 yarn start / npm start
 
 // build app 
-yarn app:dist / npm app:dist
+yarn app:dist / npm run app:dist
 ```
