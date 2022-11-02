@@ -1,6 +1,6 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
-const {chromium} = require('playwright');
+const {firefox} = require('playwright');
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -80,7 +80,7 @@ ipcMain.handle('scanSite', async (event, url) => {
     availableTypes = [];
     const currentUrl = new URL(url);
     const currentHost = currentUrl.host.replace('www.', '');
-    const browser = await chromium.launch();
+    const browser = await firefox.launch();
     const page = await browser.newPage();
     let urls = [];
     let cookies = [];
