@@ -12,7 +12,4 @@ npm run build:production
 
 // start app
 yarn start / npm start
-
-// build app 
-yarn dist / npm run dist
 ```
