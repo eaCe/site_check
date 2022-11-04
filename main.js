@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, shell} = require('electron');
 const path = require('path');
 let mainWindow = null;
 
@@ -13,7 +13,12 @@ async function createWindow() {
             nodeIntegration: false,
             contextIsolation: true,
         }
-    })
+    });
+
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+        shell.openExternal(url);
+        return { action: 'deny' };
+    });
 
     await mainWindow.loadFile('index.html');
 }
@@ -100,8 +105,8 @@ function getCookies(rawCookies) {
         cookies.forEach(cookie => {
             cookie['critical'] = criticalCookies.some(criticalCookie => cookie.name.includes(criticalCookie));
 
-            if (cookie.expires > 0) {
-                cookie['expires'] = new Date(cookie.expires * 1000).toLocaleDateString('de-DE');
+            if (cookie.expirationDate > 0) {
+                cookie['expires'] = new Date(cookie.expirationDate * 1000).toLocaleDateString('de-DE');
             } else {
                 cookie['expires'] = '∞';
             }
@@ -122,10 +127,18 @@ ipcMain.on('scanSite', async (event, url) => {
     const win = new BrowserWindow({show: false})
 
     win.webContents.once('did-finish-load', async () => {
+        /**
+         * get cookies
+         * @type {Electron.Cookie[]}
+         */
         const rawCookies = await win.webContents.session.cookies.get({});
-        const rawLocalStorage = await win.webContents.executeJavaScript('window.localStorage', true);
         cookies = getCookies(rawCookies);
 
+        /**
+         * get localstorage
+         * @type {any}
+         */
+        const rawLocalStorage = await win.webContents.executeJavaScript('window.localStorage', true);
         if (Object.keys(rawLocalStorage).length) {
             for (const key in rawLocalStorage) {
                 if (rawLocalStorage.hasOwnProperty(key)) {
@@ -137,11 +150,12 @@ ipcMain.on('scanSite', async (event, url) => {
         /**
          * sort by type
          */
-        urls.sort((a, b) => {
-            const typeA = a.type.toUpperCase();
-            const typeB = b.type.toUpperCase();
-            return (typeA > typeB) ? -1 : (typeA < typeB) ? 1 : 0;
-        });
+        urls.sort((a, b) => a.type.toUpperCase().localeCompare(b.type.toUpperCase()));
+
+        /**
+         * sort by available types
+         */
+        availableTypes.sort((a, b) => a.toUpperCase().localeCompare(b.toUpperCase()));
 
         /**
          * sort by host
@@ -163,7 +177,6 @@ ipcMain.on('scanSite', async (event, url) => {
         }, 250)
     });
 
-
     await win.webContents.session.webRequest.onHeadersReceived({urls: []}, async (request, cb) => {
         /**
          * skip main frame
@@ -171,13 +184,22 @@ ipcMain.on('scanSite', async (event, url) => {
         if (request.resourceType !== 'mainFrame') {
             const url = new URL(request.url);
             const host = url.host.replace('www.', '');
+            let size = '0';
+
+            if(request.responseHeaders['content-length'] || request.responseHeaders['Content-Length']) {
+                const responseSize = request.responseHeaders[Object.keys(request.responseHeaders).find(key => key.toLowerCase() === 'content-length')];
+                size = (responseSize / 1000).toFixed(2);
+            }
 
             urls.push({
                 'url': request.url,
                 // 'type': host === currentHost ? host : getType(request.url()),
                 'type': getType(request),
-                'same_host': host === currentHost
+                'same_host': host === currentHost,
+                'size': size
             });
+        }
+        else {
         }
 
         cb({cancel: false, responseHeaders: request.responseHeaders});
