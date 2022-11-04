@@ -15,9 +15,9 @@ async function createWindow() {
         }
     });
 
-    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    mainWindow.webContents.setWindowOpenHandler(({url}) => {
         shell.openExternal(url);
-        return { action: 'deny' };
+        return {action: 'deny'};
     });
 
     await mainWindow.loadFile('index.html');
@@ -46,14 +46,7 @@ function getType(request) {
     const resourceType = request.resourceType;
     const url = request.url;
 
-    if (resourceType === 'image' ||
-        resourceType === 'script' ||
-        resourceType === 'stylesheet') {
-        if (availableTypes.indexOf(resourceType) === -1) {
-            availableTypes.push(resourceType);
-        }
-        return resourceType;
-    } else if (url.includes('fonts.googleapis.com') ||
+    if (url.includes('fonts.googleapis.com') ||
         url.includes('fonts.gstatic.com') ||
         url.includes('myfonts.net') ||
         url.includes('use.typekit.net')) {
@@ -73,6 +66,13 @@ function getType(request) {
             availableTypes.push('youtube');
         }
         return 'youtube';
+    } else if (resourceType === 'image' ||
+        resourceType === 'script' ||
+        resourceType === 'stylesheet') {
+        if (availableTypes.indexOf(resourceType) === -1) {
+            availableTypes.push(resourceType);
+        }
+        return resourceType;
     }
 
     if (availableTypes.indexOf('misc') === -1) {
@@ -190,7 +190,7 @@ ipcMain.on('scanSite', async (event, url) => {
             const host = url.host.replace('www.', '');
             let size = '0';
 
-            if(request.responseHeaders['content-length'] || request.responseHeaders['Content-Length']) {
+            if (request.responseHeaders['content-length'] || request.responseHeaders['Content-Length']) {
                 const responseSize = request.responseHeaders[Object.keys(request.responseHeaders).find(key => key.toLowerCase() === 'content-length')];
                 size = (responseSize / 1000).toFixed(2);
             }
@@ -202,8 +202,7 @@ ipcMain.on('scanSite', async (event, url) => {
                 'same_host': host === currentHost,
                 'size': size
             });
-        }
-        else {
+        } else {
         }
 
         cb({cancel: false, responseHeaders: request.responseHeaders});
@@ -213,12 +212,12 @@ ipcMain.on('scanSite', async (event, url) => {
 });
 
 // ipcMain.handle('scanSite', async (event, url) => {
-    // const pageResponse = await page.goto(url, {waitUntil: 'load'});
-    // const securityDetails = await pageResponse.securityDetails();
-    //
-    // if (securityDetails.hasOwnProperty('validTo')) {
-    //     const expirationDate = securityDetails.validTo * 1000;
-    //     ssl = true;
-    //     sslExpiration = new Date(expirationDate).toLocaleDateString('de-DE');
-    // }
+// const pageResponse = await page.goto(url, {waitUntil: 'load'});
+// const securityDetails = await pageResponse.securityDetails();
+//
+// if (securityDetails.hasOwnProperty('validTo')) {
+//     const expirationDate = securityDetails.validTo * 1000;
+//     ssl = true;
+//     sslExpiration = new Date(expirationDate).toLocaleDateString('de-DE');
+// }
 // });
