@@ -2,14 +2,21 @@ const {ipcRenderer, contextBridge} = require("electron");
 
 contextBridge.exposeInMainWorld(
     "api", {
-        invoke: (channel, data) => {
+        send: (channel, data) => {
+            // whitelist channels
             let validChannels = ["scanSite"];
             if (validChannels.includes(channel)) {
-                return ipcRenderer.invoke(channel, data);
+                ipcRenderer.send(channel, data);
             }
         },
+        receive: (channel, func) => {
+            let validChannels = ["siteScanned"];
+            if (validChannels.includes(channel)) {
+                ipcRenderer.on(channel, (event, ...args) => func(...args));
+            }
+        }
     }
 );
 
-window.addEventListener('DOMContentLoaded', () => {
-})
+// window.addEventListener('DOMContentLoaded', () => {
+// })

@@ -1,9 +1,9 @@
 const {app, BrowserWindow, ipcMain} = require('electron');
 const path = require('path');
-const {firefox} = require('playwright');
+let mainWindow = null;
 
-function createWindow() {
-    const mainWindow = new BrowserWindow({
+async function createWindow() {
+    mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
         autoHideMenuBar: true,
@@ -15,11 +15,11 @@ function createWindow() {
         }
     })
 
-    mainWindow.loadFile('index.html')
+    await mainWindow.loadFile('index.html');
 }
 
-app.whenReady().then(() => {
-    createWindow()
+app.whenReady().then(async () => {
+    await createWindow()
 
     app.on('activate', function () {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -38,8 +38,8 @@ let availableTypes = [];
  * @returns {string|*}
  */
 function getType(request) {
-    const resourceType = request.resourceType();
-    const url = request.url();
+    const resourceType = request.resourceType;
+    const url = request.url;
 
     if (resourceType === 'image' ||
         resourceType === 'script' ||
@@ -76,58 +76,13 @@ function getType(request) {
     return 'misc';
 }
 
-ipcMain.handle('scanSite', async (event, url) => {
-    availableTypes = [];
-    const currentUrl = new URL(url);
-    const currentHost = currentUrl.host.replace('www.', '');
-    const browser = await firefox.launch();
-    const page = await browser.newPage();
-    let urls = [];
+/**
+ * get the cookies array
+ * @param rawCookies
+ * @returns {*[]}
+ */
+function getCookies(rawCookies) {
     let cookies = [];
-    let localStorage = [];
-    let ssl = false;
-    let sslExpiration = '';
-
-    /**
-     * get urls
-     */
-    await page.on('request', request => {
-        const url = new URL(request.url());
-        const host = url.host.replace('www.', '');
-        urls.push({
-            'url': request.url(),
-            // 'type': host === currentHost ? host : getType(request.url()),
-            'type': getType(request),
-            'same_host': host === currentHost
-        });
-    });
-
-    // await page.on('response', response => {
-    // const url = new URL(response.url());
-    // const host = url.host.replace('www.', '');
-    // urls.push({
-    //     'url': response.url(),
-    //     // 'type': host === currentHost ? host : getType(response.url()),
-    //     'type': getType(response),
-    //     'same_host': host === currentHost
-    // });
-    // });
-
-    const pageResponse = await page.goto(url, {waitUntil: 'load'});
-    const securityDetails = await pageResponse.securityDetails();
-
-    if (securityDetails.hasOwnProperty('validTo')) {
-        const expirationDate = securityDetails.validTo * 1000;
-        ssl = true;
-        sslExpiration = new Date(expirationDate).toLocaleDateString('de-DE');
-    }
-
-    /**
-     * get cookies
-     * @type {Array<Cookie>}
-     */
-    const rawCookies = await page.context().cookies();
-
     if (rawCookies.length) {
         const criticalCookies = [
             // youtube
@@ -153,44 +108,91 @@ ipcMain.handle('scanSite', async (event, url) => {
         });
     }
 
-    /**
-     * get data from local storage
-     * @type {Storage}
-     */
-    const localStorageData = await page.evaluate(() =>
-        window.localStorage
-    );
+    return cookies;
+}
 
-    if (Object.keys(localStorageData).length) {
-        for (const key in localStorageData) {
-            if (localStorageData.hasOwnProperty(key)) {
-                localStorage.push({'key': key, 'value': localStorageData[key]})
+ipcMain.on('scanSite', async (event, url) => {
+    const currentUrl = new URL(url);
+    const currentHost = currentUrl.host.replace('www.', '');
+    availableTypes = [];
+    let urls = [];
+    let cookies = [];
+    let localStorage = [];
+
+    const win = new BrowserWindow({show: false})
+
+    win.webContents.once('did-finish-load', async () => {
+        const rawCookies = await win.webContents.session.cookies.get({});
+        const rawLocalStorage = await win.webContents.executeJavaScript('window.localStorage', true);
+        cookies = getCookies(rawCookies);
+
+        if (Object.keys(rawLocalStorage).length) {
+            for (const key in rawLocalStorage) {
+                if (rawLocalStorage.hasOwnProperty(key)) {
+                    localStorage.push({'key': key, 'value': rawLocalStorage[key]})
+                }
             }
         }
-    }
 
-    await browser.close();
+        /**
+         * sort by type
+         */
+        urls.sort((a, b) => {
+            const typeA = a.type.toUpperCase();
+            const typeB = b.type.toUpperCase();
+            return (typeA > typeB) ? -1 : (typeA < typeB) ? 1 : 0;
+        });
 
-    /**
-     * sort by type
-     */
-    urls.sort((a, b) => {
-        const typeA = a.type.toUpperCase();
-        const typeB = b.type.toUpperCase();
-        return (typeA > typeB) ? -1 : (typeA < typeB) ? 1 : 0;
+        /**
+         * sort by host
+         */
+        urls.sort((a, b) => Number(b.same_host) - Number(a.same_host));
+
+        setTimeout(() => {
+            event.sender.send('siteScanned', {
+                'urls': urls,
+                'cookies': cookies,
+                'localStorage': localStorage,
+                'types': availableTypes,
+                'ssl': false,
+                // 'sslExpiration': sslExpiration,
+            });
+
+            win.webContents.session.clearStorageData();
+            win.destroy();
+        }, 250)
     });
 
-    /**
-     * sort by host
-     */
-    urls.sort((a, b) => Number(b.same_host) - Number(a.same_host));
 
-    return {
-        'urls': urls,
-        'cookies': cookies,
-        'localStorage': localStorage,
-        'types': availableTypes,
-        'ssl': ssl,
-        'sslExpiration': sslExpiration,
-    };
+    await win.webContents.session.webRequest.onHeadersReceived({urls: []}, async (request, cb) => {
+        /**
+         * skip main frame
+         */
+        if (request.resourceType !== 'mainFrame') {
+            const url = new URL(request.url);
+            const host = url.host.replace('www.', '');
+
+            urls.push({
+                'url': request.url,
+                // 'type': host === currentHost ? host : getType(request.url()),
+                'type': getType(request),
+                'same_host': host === currentHost
+            });
+        }
+
+        cb({cancel: false, responseHeaders: request.responseHeaders});
+    });
+
+    await win.loadURL(url)
 });
+
+// ipcMain.handle('scanSite', async (event, url) => {
+    // const pageResponse = await page.goto(url, {waitUntil: 'load'});
+    // const securityDetails = await pageResponse.securityDetails();
+    //
+    // if (securityDetails.hasOwnProperty('validTo')) {
+    //     const expirationDate = securityDetails.validTo * 1000;
+    //     ssl = true;
+    //     sslExpiration = new Date(expirationDate).toLocaleDateString('de-DE');
+    // }
+// });

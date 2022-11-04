@@ -30,22 +30,18 @@ window.scan = () => {
 
             this.error = '';
             this.loading = true;
-            window.api.invoke('scanSite', this.requestUrl.href)
-                .then(res => {
-                    this.reset();
-                    this.urls = res.urls;
-                    this.cookies = res.cookies;
-                    this.types = res.types;
-                    this.localStorage = res.localStorage;
-                    this.ssl = res.ssl;
-                    this.sslExpiration = res.sslExpiration;
-                })
-                .catch(err => {
-                    console.error(err);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
+            window.api.send('scanSite', this.requestUrl.href);
+
+            window.api.receive('siteScanned', (data) =>{
+                this.reset();
+                this.urls = data.urls;
+                this.cookies = data.cookies;
+                this.types = data.types;
+                this.localStorage = data.localStorage;
+                this.ssl = data.ssl;
+                this.loading = false;
+                // this.sslExpiration = data.sslExpiration;
+            });
         },
         reset() {
             this.type = '';
