@@ -178,6 +178,10 @@ ipcMain.on('scanSite', async (event, url) => {
     });
 
     await win.webContents.session.webRequest.onHeadersReceived({urls: []}, async (request, cb) => {
+        if (request.method !== 'GET') {
+            return;
+        }
+
         /**
          * skip main frame
          */
