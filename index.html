@@ -107,8 +107,7 @@
                 </div>
             </template>
 
-            <div class="space-y-2 w-full">
-
+            <div class="w-full">
                 <div class="overflow-auto rounded-md shadow-sm text-slate-700 mt-3">
                     <table class="min-w-full divide-y divide-slate-300">
                         <thead class="bg-white">
@@ -177,47 +176,63 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
-
         </div>
     </template>
+
     <template x-if="cookies.length">
         <div class="flex flex-wrap pb-6">
             <p class="text-lg text-slate-700 font-bold block mb-2 mt-4 w-full">Cookies</p>
-            <div class="space-y-2 w-full">
-
-            <template x-for="cookie in cookies">
-                <div class="w-full rounded-md shadow-sm text-slate-700 flex flex-wrap p-2"
-                     :class="cookie.critical ? 'bg-orange-300 bg-opacity-30' : 'bg-white'">
-                    <div class="w-full md:w-6/12">
-                        <div><strong>Domain:</strong> <span  x-text="cookie.domain"></span></div>
-                    </div>
-                    <div class="w-full md:w-6/12">
-                        <div><strong>Ablaufdatum:</strong> <span  x-text="cookie.expires"></span></div>
-                    </div>
-                    <div class="w-full md:w-6/12">
-                        <div><strong>Name:</strong> <span  x-text="cookie.name"></span></div>
-                    </div>
-                    <div class="w-full md:w-6/12">
-                        <div><strong>Value:</strong> <span  x-text="cookie.value"></span></div>
-                    </div>
+            <div class="w-full">
+                <div class="overflow-auto rounded-md shadow-sm text-slate-700 mt-3">
+                    <table class="min-w-full divide-y divide-slate-300">
+                        <thead class="bg-white">
+                        <tr class="border-b border-slate-200">
+                            <th class="text-left bold px-3 py-2">Domain</th>
+                            <th class="text-left bold px-3 py-2">Name</th>
+                            <th class="text-left bold px-3 py-2">Value</th>
+                            <th class="text-left bold px-3 py-2">Ablaufdatum</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white bg-white">
+                        <template x-for="cookie in cookies">
+                            <tr class="w-full text-slate-700 bg-white text-sm"
+                                :class="cookie.critical ? 'bg-red-300 bg-opacity-20' : 'bg-green-200 bg-opacity-20'">
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="cookie.domain"></span></td>
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="cookie.name"></span></td>
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="cookie.value"></span></td>
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="cookie.expires"></span></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
                 </div>
-            </template>
             </div>
-
         </div>
     </template>
+
     <template x-if="localStorage.length">
         <div class="flex flex-wrap pb-6">
             <p class="text-lg text-slate-700 font-bold block mb-2 mt-4 w-full">Local Storage</p>
-            <div class="space-y-2 w-full">
-            <template x-for="localStore in localStorage">
-                <div class="w-full rounded-md shadow-sm text-slate-700 bg-white p-2">
-                    <div><strong>Key:</strong> <span  x-text="localStore.key"></span></div>
-                    <div><strong>Value:</strong> <span  x-text="localStore.value"></span></div>
+            <div class="w-full">
+                <div class="overflow-auto rounded-md shadow-sm text-slate-700 mt-3">
+                    <table class="min-w-full divide-y divide-slate-300">
+                        <thead class="bg-white">
+                        <tr class="border-b border-slate-200">
+                            <th class="text-left bold px-3 py-2">Key</th>
+                            <th class="text-left bold px-3 py-2">Value</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white bg-white">
+                        <template x-for="localStore in localStorage">
+                            <tr class="w-full text-slate-700 bg-white text-sm">
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="localStore.key"></span></td>
+                                <td class="whitespace-wrap break-all pl-3 py-2"><span x-text="localStore.value"></span></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
                 </div>
-            </template>
             </div>
         </div>
     </template>
